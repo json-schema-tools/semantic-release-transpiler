@@ -9,30 +9,30 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
 
-interface IPluginConfig {
+interface PluginConfig {
   schemaLocation: string | string[];
   outputName?: string;
   languages?: {
-    ts: boolean;
-    go: boolean;
-    rs: boolean;
-    py: boolean;
+    ts?: boolean;
+    go?: boolean;
+    rs?: boolean;
+    py?: boolean;
   };
 }
 
-interface IContext {
+interface Context {
   nextRelease?: {
     version?: string;
   };
 }
 
-type PluginFunction = (pluginConfig: IPluginConfig, context: IContext) => any;
+type PluginFunction = (pluginConfig: PluginConfig, context: Context) => any;
 
-let verified: boolean = false;
+let verified = false;
 
 export const verifyConditions: PluginFunction = async (pluginConfig, context): Promise<boolean> => {
   const cwd = process.cwd();
-  const config: IPluginConfig = {
+  const config: PluginConfig = {
     schemaLocation: pluginConfig.schemaLocation,
   };
 
@@ -45,14 +45,16 @@ export const verifyConditions: PluginFunction = async (pluginConfig, context): P
     paths.push(path.resolve(cwd, config.schemaLocation))
   }
 
-
-  paths.forEach(async (p) => {
+  const existsPromises = paths.map(async (p) => {
     const exists = await checkExists(p);
     if (!exists) {
       const noDocumentError = errors.ENODOCUMENT();
       throw new SemanticReleaseError(noDocumentError.message, noDocumentError.code, noDocumentError.details);
     }
+    return exists;
   });
+
+  await Promise.all(existsPromises);
 
   verified = true;
   return verified;
@@ -60,7 +62,7 @@ export const verifyConditions: PluginFunction = async (pluginConfig, context): P
 
 export const prepare: PluginFunction = async (pluginConfig, context): Promise<boolean> => {
   if (!verified) {
-    throw new SemanticReleaseError("Not verified", "ENOTVERIFIED", "Something went wrong and the openrpc.json was not able to be verified."); //tslint:disable-line
+    throw new SemanticReleaseError("Not verified", "ENOTVERIFIED", "Something went wrong and the schemas were not able to be verified."); //tslint:disable-line
   }
   if (!context || !context.nextRelease || !context.nextRelease.version) {
     throw new SemanticReleaseError("No nextRelease version", "ENOVERSION", "Something went wrong and there is no next release version"); //tslint:disable-line
