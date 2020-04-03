@@ -1,0 +1,25 @@
+{
+  "name": "@json-schema-tools/semantic-release-transpiler",
+  "version": "0.0.0-development",
+  "description": "",
+  "main": "build/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --coverage"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/jest": "^25.1.0",
+    "@types/node": "^13.1.0",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.0.0",
+    "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "@etclabscore/json-schema-to-types": "^1.10.1"
+  }
+}
