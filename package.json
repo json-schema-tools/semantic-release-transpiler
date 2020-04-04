@@ -18,13 +18,16 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^25.1.0",
+    "@types/lodash": "^4.14.149",
     "@types/node": "^13.1.0",
     "jest": "^25.1.0",
-    "ts-jest": "^25.0.0",
-    "typescript": "^3.5.1"
+    "ts-jest": "^25.0.0"
   },
   "dependencies": {
+    "node-typescript-compiler": "^2.1.1",
+    "typescript": "^3.5.1",
     "@etclabscore/json-schema-to-types": "^1.10.1",
-    "@open-rpc/meta-schema": "^1.8.0"
+    "@open-rpc/meta-schema": "^1.8.0",
+    "lodash": "^4.17.15"
   }
 }
