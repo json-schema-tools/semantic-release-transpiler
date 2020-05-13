@@ -65,25 +65,26 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
   await mkdir(`./${outpath}/src`, { recursive: true });
 
   const schemaPath = path.resolve(process.cwd(), pluginConfig.schemaLocation);
-  await cp(schemaPath, `${outpath}/src/schema.json`);
 
   const schema = JSON.parse(await readFile(schemaPath, "utf8"));
+
+  await writeFile(`${outpath}/src/schema.json`, JSON.stringify(schema));
 
   if (!schema.title) {
     throw new SemanticReleaseError("The schema must have a title", "ENOTITLE", "Schema requires a title");
   }
 
   const transpiler = new JsonSchemaToTypes(schema);
-  const outTS = path.resolve(outpath, "src/generated-typings");
+  const outTS = `${outpath}/src/generated-typings`;
 
   if (!pluginConfig.languages || pluginConfig.languages.ts) {
     await writeFile(`${outTS}.ts`, transpiler.toTs());
 
-    const indexTS = path.resolve(outpath, "src/index.ts");
+    const indexTS = `${outpath}/src/index.ts`;
     const regularName = camelCase(schema.title);
     const ts = [
       `import * as Generated from "./generated-typings";`,
-      `import ${regularName} from "${schemaPath}"`,
+      `import ${regularName} from "./schema.json"`,
       `export default { ${regularName}, ...Generated };`
     ].join("\n");
     await writeFile(indexTS, ts)
