@@ -3,7 +3,7 @@ import checkExists from "./checkExists";
 import SemanticReleaseError from "./semanticReleaseError";
 import errors from "./definitions/errors";
 import JsonSchemaToTypes from "@etclabscore/json-schema-to-types";
-import { camelCase } from "lodash";
+import { camelCase, capitalize } from "lodash";
 import * as fs from "fs";
 import { promisify } from "util";
 const readFile = promisify(fs.readFile);
@@ -82,9 +82,13 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
 
     const indexTS = `${outpath}/src/index.ts`;
     const regularName = camelCase(schema.title);
+    const capitalName = capitalCase(schema.title);
     const ts = [
       `export * from "./generated-typings";`,
-      `export { default as ${regularName} } from "./schema.json";`,
+      `import {${capitalName}} from "./generated-typings";`,
+      `import schema from "./schema.json";`,
+      `export const ${regularName}: ${capitalName} = schema;`,
+      `export default ${regularName}`,
     ].join("\n");
     await writeFile(indexTS, ts)
     await tsc.compile({
