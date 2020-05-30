@@ -82,7 +82,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
 
     const indexTS = `${outpath}/src/index.ts`;
     const regularName = camelCase(schema.title);
-    const capitalName = capitalCase(schema.title);
+    const capitalName = capitalize(schema.title);
     const ts = [
       `export * from "./generated-typings";`,
       `import {${capitalName}} from "./generated-typings";`,
