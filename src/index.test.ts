@@ -1,7 +1,6 @@
 import { prepare, verifyConditions } from "./index";
 import SemanticReleaseError from "./semanticReleaseError";
 import * as fs from "fs";
-import * as path from "path";
 import * as util from "util";
 
 const readFile = util.promisify(fs.readFile);
@@ -31,11 +30,11 @@ describe("json-schema-tools semantic-release plugin", () => {
     });
     it("can pass prepare and set the version", async () => {
       return prepare({ outpath: "./testeroo", schemaLocation: "./src/test-schema.json", languages: { ts: true } }, { nextRelease: { version: "1.0.0" } })
-        .then(async (prepared: boolean) => {
+        .then(async () => {
           const file = await readFile("./testeroo/src/generated-typings.ts", "utf8");
           expect(typeof file).toEqual("string");
         });
-    });
+    }, 10000);
   });
 
 });
