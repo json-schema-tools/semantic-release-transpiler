@@ -82,13 +82,10 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
 
     const indexTS = `${outpath}/src/index.ts`;
     const regularName = camelCase(schema.title);
-    const capitalName = capitalize(schema.title);
     const ts = [
       `export * from "./generated-typings";`,
-      `import {${capitalName}} from "./generated-typings";`,
       `import schema from "./schema.json";`,
       `export const ${regularName} = schema;`,
-      `export default ${regularName}`,
     ].join("\n");
     await writeFile(indexTS, ts)
     await tsc.compile({
