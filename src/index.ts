@@ -75,7 +75,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
   }
 
   const transpiler = new JsonSchemaToTypes(schema);
-  const outTS = `${outpath}/src/generated-typings`;
+  const outTS = `${outpath}/src/index.d.ts`;
 
   if (!pluginConfig.languages || pluginConfig.languages.ts) {
     await writeFile(`${outTS}.ts`, transpiler.toTs());
@@ -83,7 +83,6 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
     const indexTS = `${outpath}/src/index.ts`;
     const regularName = camelCase(schema.title);
     const ts = [
-      `export * from "./generated-typings";`,
       `import schema from "./schema.json";`,
       `export const ${regularName} = schema;`,
     ].join("\n");
@@ -100,6 +99,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
       "esModuleInterop": true,
       "resolveJsonModule": true
     });
+    await writeFile(`${outTS}.ts`, transpiler.toTs());
   }
   if (!pluginConfig.languages || pluginConfig.languages.go) {
     await writeFile(`${outTS}.go`, transpiler.toGo());
