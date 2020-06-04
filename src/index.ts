@@ -75,11 +75,9 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
   }
 
   const transpiler = new JsonSchemaToTypes(schema);
-  const outTS = `${outpath}/src/index.d.ts`;
+  const outTS = `build/src/index.d`;
 
   if (!pluginConfig.languages || pluginConfig.languages.ts) {
-    await writeFile(`${outTS}.ts`, transpiler.toTs());
-
     const indexTS = `${outpath}/src/index.ts`;
     const regularName = camelCase(schema.title);
     const ts = [
@@ -94,11 +92,14 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
         "es2015",
       ],
       "declaration": true,
-      "outDir": "./build",
+      "outDir": "build",
       "strict": true,
       "esModuleInterop": true,
-      "resolveJsonModule": true
-    });
+      "resolveJsonModule": true,
+    }, [
+      `${outpath}/src/index.ts`,
+      `${outpath}/src/schema.json`
+    ]);
     await writeFile(`${outTS}.ts`, transpiler.toTs());
   }
   if (!pluginConfig.languages || pluginConfig.languages.go) {
