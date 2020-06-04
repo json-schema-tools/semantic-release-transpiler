@@ -31,7 +31,7 @@ describe("json-schema-tools semantic-release plugin", () => {
     it("can pass prepare and set the version", async () => {
       return prepare({ outpath: "./testeroo", schemaLocation: "./src/test-schema.json", languages: { ts: true } }, { nextRelease: { version: "1.0.0" } })
         .then(async () => {
-          const file = await readFile("./build/testeroo/src/index.d.ts", "utf8");
+          const file = await readFile("./build/index.d.ts", "utf8");
           expect(typeof file).toEqual("string");
         });
     }, 10000);

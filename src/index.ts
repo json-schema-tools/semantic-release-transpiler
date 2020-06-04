@@ -75,7 +75,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
   }
 
   const transpiler = new JsonSchemaToTypes(schema);
-  const outTS = `build/src/index.d`;
+  const outTS = `build/index`;
 
   if (!pluginConfig.languages || pluginConfig.languages.ts) {
     const indexTS = `${outpath}/src/index.ts`;
@@ -100,7 +100,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
       `${outpath}/src/index.ts`,
       `${outpath}/src/schema.json`
     ]);
-    await writeFile(`${outTS}.ts`, transpiler.toTs());
+    await writeFile(`${outTS}.d.ts`, transpiler.toTs());
   }
   if (!pluginConfig.languages || pluginConfig.languages.go) {
     await writeFile(`${outTS}.go`, transpiler.toGo());
