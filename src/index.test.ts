@@ -12,7 +12,7 @@ describe("json-schema-tools semantic-release plugin", () => {
   describe("verifyConditions", () => {
     it("can error on verifyConditions", () => {
       return verifyConditions({ outpath: "./testeroo", schemaLocation: "./src/test.json", languages: { ts: true } }, {}).catch((e: SemanticReleaseError) => {
-        expect(e.message).toContain("Missing json schema document file.");
+        expect(e.message).toContain("Cannot find schema");
       });
     });
     it("can pass verifyConditions", () => {
@@ -24,19 +24,30 @@ describe("json-schema-tools semantic-release plugin", () => {
 
   describe("prepare", () => {
     it("can fail if no next release version", () => {
-      return prepare({ outpath: "./testeroo", schemaLocation: "./src/test-schema.json", languages: { ts: true } }, {}).catch((e: SemanticReleaseError) => {
-        expect(e.message).toContain("No nextRelease version");
-      });
+      return prepare({ outpath: "./testeroo", schemaLocation: "./src/test-schema.json", languages: { ts: true } }, {})
+        .catch((e: SemanticReleaseError) => {
+          expect(e.message).toContain("No nextRelease version");
+        });
     });
     it("can pass prepare and set the version", async () => {
-      return prepare({ outpath: "./testeroo", schemaLocation: "./src/test-schema.json", languages: { ts: true } }, { nextRelease: { version: "1.0.0" } })
-        .then(async () => {
-          const file = await readFile("./build/index.d.ts", "utf8");
-          expect(typeof file).toEqual("string");
-          const exported = require('../build/index.js');
-          expect(exported.default.default).toBe(true);
-          expect(exported.default.type).toBe("string");
-        });
+      return prepare(
+        {
+          outpath: "./testeroo",
+          schemaLocation: "./src/test-schema.json",
+          languages: { ts: true, go: true }
+        },
+        { nextRelease: { version: "1.0.0" } }
+      ).then(async () => {
+        const tsFile = await readFile("./testeroo/build/index.d.ts", "utf8");
+        expect(typeof tsFile).toEqual("string");
+
+        const goFile = await readFile("./testeroo/foobar.go", "utf8");
+        expect(typeof goFile).toBe("string");
+
+        const exported = require('../testeroo/build/index.js'); // eslint-disable-line
+        expect(exported.default.default).toBe(true);
+        expect(exported.default.type).toBe("string");
+      });
     }, 10000);
   });
 
