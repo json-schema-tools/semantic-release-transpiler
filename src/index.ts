@@ -66,9 +66,10 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
 
   const schemaPath = path.resolve(process.cwd(), pluginConfig.schemaLocation);
 
-  const schema = JSON.parse(await readFile(schemaPath, "utf8"));
+  const schemaString = await readFile(schemaPath, "utf8");
+  const schema = JSON.parse(schemaString);
 
-  await writeFile(`${outpath}/src/schema.json`, JSON.stringify(schema));
+  await writeFile(`${outpath}/src/schema.json`, schemaString);
 
   if (!schema.title) {
     throw new SemanticReleaseError("The schema must have a title", "ENOTITLE", "Schema requires a title");
@@ -81,8 +82,8 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
     const indexTS = `${outpath}/src/index.ts`;
     const regularName = camelCase(schema.title);
     const ts = [
-      `import schema from "./schema.json";`,
-      `export const ${regularName} = schema;`,
+      `export const ${regularName} = ${schemaString};`,
+      `export default ${regularName}`
     ].join("\n");
     await writeFile(indexTS, ts)
     await tsc.compile({

@@ -1,4 +1,5 @@
 {
   "title": "foobar",
-  "type": "string"
+  "type": "string",
+  "default": true
 }

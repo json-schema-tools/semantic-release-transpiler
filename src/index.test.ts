@@ -33,6 +33,9 @@ describe("json-schema-tools semantic-release plugin", () => {
         .then(async () => {
           const file = await readFile("./build/index.d.ts", "utf8");
           expect(typeof file).toEqual("string");
+          const exported = require('../build/index.js');
+          expect(exported.default.default).toBe(true);
+          expect(exported.default.type).toBe("string");
         });
     }, 10000);
   });
