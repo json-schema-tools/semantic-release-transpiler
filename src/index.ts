@@ -1,7 +1,7 @@
 import * as path from "path";
 import checkExists from "./checkExists";
 import SemanticReleaseError from "./semanticReleaseError";
-import JsonSchemaToTypes from "@etclabscore/json-schema-to-types";
+import Transpiler from "@json-schema-tools/transpiler";
 import { camelCase, snakeCase, upperFirst } from "lodash";
 import * as fs from "fs";
 import { promisify } from "util";
@@ -52,7 +52,7 @@ export const verifyConditions: PluginFunction = async (pluginConfig): Promise<bo
   return verified;
 };
 
-const generateTs = async (transpiler: JsonSchemaToTypes, schema: JSONMetaSchema, outpath: string): Promise<boolean> => {
+const generateTs = async (transpiler: Transpiler, schema: JSONMetaSchema, outpath: string): Promise<boolean> => {
   const indexTS = `${outpath}/src/index.ts`;
   const regularName = camelCase(schema.title);
   const ts = [
@@ -79,7 +79,7 @@ const generateTs = async (transpiler: JsonSchemaToTypes, schema: JSONMetaSchema,
   return true;
 }
 
-const generateGo = async (transpiler: JsonSchemaToTypes, schema: JSONMetaSchema, outpath: string): Promise<boolean> => {
+const generateGo = async (transpiler: Transpiler, schema: JSONMetaSchema, outpath: string): Promise<boolean> => {
   const packageName = snakeCase(schema.title);
   const exportName = `Raw${upperFirst(packageName)}`;
   const escapedS = JSON.stringify(schema).replace(/"/g, "\\\"");
@@ -119,7 +119,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
     throw new SemanticReleaseError("The schema must have a title", "ENOTITLE", "Schema requires a title");
   }
 
-  const transpiler = new JsonSchemaToTypes(schema);
+  const transpiler = new Transpiler(schema);
 
   if (!pluginConfig.languages || pluginConfig.languages.ts) {
     await generateTs(transpiler, schema, outpath);
