@@ -5,7 +5,7 @@ import JsonSchemaToTypes from "@etclabscore/json-schema-to-types";
 import { camelCase, snakeCase, upperFirst } from "lodash";
 import * as fs from "fs";
 import { promisify } from "util";
-import { CoreSchemaMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
@@ -52,7 +52,7 @@ export const verifyConditions: PluginFunction = async (pluginConfig): Promise<bo
   return verified;
 };
 
-const generateTs = async (transpiler: JsonSchemaToTypes, schema: CoreSchemaMetaSchema, outpath: string): Promise<boolean> => {
+const generateTs = async (transpiler: JsonSchemaToTypes, schema: JSONMetaSchema, outpath: string): Promise<boolean> => {
   const indexTS = `${outpath}/src/index.ts`;
   const regularName = camelCase(schema.title);
   const ts = [
@@ -79,7 +79,7 @@ const generateTs = async (transpiler: JsonSchemaToTypes, schema: CoreSchemaMetaS
   return true;
 }
 
-const generateGo = async (transpiler: JsonSchemaToTypes, schema: CoreSchemaMetaSchema, outpath: string): Promise<boolean> => {
+const generateGo = async (transpiler: JsonSchemaToTypes, schema: JSONMetaSchema, outpath: string): Promise<boolean> => {
   const packageName = snakeCase(schema.title);
   const exportName = `Raw${upperFirst(packageName)}`;
   const escapedS = JSON.stringify(schema).replace(/"/g, "\\\"");
