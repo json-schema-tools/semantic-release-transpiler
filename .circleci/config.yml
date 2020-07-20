@@ -86,6 +86,5 @@ workflows:
           filters: *filter-only-master
           context: sem-rel-json-schema-tools
           requires:
-            - hold
             - build
             - test
