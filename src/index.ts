@@ -6,6 +6,7 @@ import { camelCase, snakeCase, upperFirst } from "lodash";
 import * as fs from "fs";
 import { promisify } from "util";
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import Dereferencer from "@json-schema-tools/dereferencer";
 
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
@@ -119,7 +120,15 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
     throw new SemanticReleaseError("The schema must have a title", "ENOTITLE", "Schema requires a title");
   }
 
-  const transpiler = new Transpiler(schema);
+  let dereffedSchema;
+  try {
+    const dereffer = new Dereferencer(schema);
+    dereffedSchema = await dereffer.resolve();
+  } catch (e) {
+    throw new SemanticReleaseError(e.message);
+  }
+
+  const transpiler = new Transpiler(dereffedSchema);
 
   if (!pluginConfig.languages || pluginConfig.languages.ts) {
     await generateTs(transpiler, schema, outpath);

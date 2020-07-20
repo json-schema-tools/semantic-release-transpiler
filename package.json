@@ -30,6 +30,7 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
+    "@json-schema-tools/dereferencer": "^1.0.15",
     "@json-schema-tools/transpiler": "^1.2.1",
     "lodash": "^4.17.15",
     "node-typescript-compiler": "^2.1.2"
