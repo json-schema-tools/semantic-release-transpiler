@@ -38,13 +38,13 @@ describe("json-schema-tools semantic-release plugin", () => {
         },
         { nextRelease: { version: "1.0.0" } }
       ).then(async () => {
-        const tsFile = await readFile("./testeroo/build/index.d.ts", "utf8");
+        const tsFile = await readFile("./testeroo/index.d.ts", "utf8");
         expect(typeof tsFile).toEqual("string");
 
         const goFile = await readFile("./testeroo/foobar.go", "utf8");
         expect(typeof goFile).toBe("string");
 
-        const exported = require('../testeroo/build/index.js'); // eslint-disable-line
+        const exported = require('../testeroo/index.js'); // eslint-disable-line
         expect(exported.default.default).toBe(true);
         expect(exported.default.type).toBe("string");
       });
