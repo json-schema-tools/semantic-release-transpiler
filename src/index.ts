@@ -68,7 +68,7 @@ const generateTs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
       "es2015",
     ],
     "declaration": true,
-    "outDir": `${outpath}/build`,
+    "outDir": `${outpath}`,
     "strict": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -76,7 +76,7 @@ const generateTs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
     indexTS,
     `${outpath}/src/schema.json`
   ]);
-  await writeFile(`${outpath}/build/index.d.ts`, transpiler.toTs());
+  await writeFile(`${outpath}/index.d.ts`, transpiler.toTs());
   return true;
 }
 
