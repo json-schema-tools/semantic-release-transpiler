@@ -89,9 +89,9 @@ const generateGo = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
     `package ${packageName}`,
     "",
     "",
-    `const ${exportName} = "${escapedS}"`,
-    "",
     transpiler.toGo(),
+    "",
+    `const ${exportName} = "${escapedS}"`,
   ].join("\n");
 
   await writeFile(`${outpath}/${packageName}.go`, go);
