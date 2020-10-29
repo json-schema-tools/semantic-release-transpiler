@@ -25,7 +25,7 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@json-schema-tools/meta-schema": "^1.5.8",
+    "@json-schema-tools/meta-schema": "^1.5.9",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.162",
     "@types/node": "^14.14.2",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@json-schema-tools/dereferencer": "^1.2.8",
-    "@json-schema-tools/transpiler": "^1.5.2",
+    "@json-schema-tools/transpiler": "^1.5.5",
     "lodash": "^4.17.20",
     "node-typescript-compiler": "^2.1.2"
   }
