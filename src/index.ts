@@ -105,7 +105,7 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
   let cargotoml;
 
   try {
-    cargotoml = toml.parse(await readFile("${outpath}/cargo.toml", "utf8"));
+    cargotoml = toml.parse(await readFile("${outpath}/Cargo.toml", "utf8"));
     cargotoml.version = version;
   } catch (e) {
     cargotoml = {
@@ -118,8 +118,9 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
       }
     }
   }
-  await writeFile(`${outpath}/cargo.toml`, toml.stringify(cargotoml));
-  await writeFile(`${outpath}/index.rs`, transpiler.toRs());
+
+  await writeFile(`${outpath}/Cargo.toml`, toml.stringify(cargotoml));
+  await writeFile(`${outpath}/src/lib.rs`, transpiler.toRs());
 
   return true;
 };
