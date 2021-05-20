@@ -7,6 +7,7 @@ import * as fs from "fs";
 import { promisify } from "util";
 import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import Dereferencer from "@json-schema-tools/dereferencer";
+import toml from "@iarna/toml";
 
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
@@ -98,6 +99,32 @@ const generateGo = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
   return true;
 }
 
+const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outpath: string, version: string): Promise<boolean> => {
+  const crateName = snakeCase(schema.title);
+
+  let cargotoml;
+
+  try {
+    cargotoml = toml.parse(await readFile("${outpath}/Cargo.toml", "utf8"));
+    cargotoml.version = version;
+  } catch (e) {
+    cargotoml = {
+      package: {
+        name: crateName,
+        version
+      },
+      dependencies: {
+        serde: "1.0.125"
+      }
+    }
+  }
+
+  await writeFile(`${outpath}/Cargo.toml`, toml.stringify(cargotoml));
+  await writeFile(`${outpath}/src/lib.rs`, transpiler.toRs());
+
+  return true;
+};
+
 export const prepare: PluginFunction = async (pluginConfig, context): Promise<boolean> => {
   if (!verified) {
     throw new SemanticReleaseError("Not verified", "ENOTVERIFIED", "Something went wrong and the schemas were not able to be verified."); //tslint:disable-line
@@ -137,7 +164,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
     await generateGo(transpiler, schema, outpath);
   }
   if (!pluginConfig.languages || pluginConfig.languages.rs) {
-    await writeFile(`${outpath}/index.rs`, transpiler.toRs());
+    await generateRs(transpiler, schema, outpath, context.nextRelease.version)
   }
   if (!pluginConfig.languages || pluginConfig.languages.py) {
     await writeFile(`${outpath}/index.py`, transpiler.toPy());
