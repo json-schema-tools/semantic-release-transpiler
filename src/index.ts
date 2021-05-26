@@ -114,7 +114,8 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
         version
       },
       dependencies: {
-        serde: "1.0.125"
+        serde: "1.0",
+        serde_json: "1.0",
       }
     }
   }
