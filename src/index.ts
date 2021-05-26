@@ -5,7 +5,7 @@ import Transpiler from "@json-schema-tools/transpiler";
 import { camelCase, snakeCase, upperFirst } from "lodash";
 import * as fs from "fs";
 import { promisify } from "util";
-import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
+import { JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import Dereferencer from "@json-schema-tools/dereferencer";
 import toml from "@iarna/toml";
 
@@ -115,7 +115,7 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
       },
       dependencies: {
         serde: "1.0",
-        serde_json: "1.0",
+        serde_json: "1.0", // eslint-disable-line
       }
     }
   }
