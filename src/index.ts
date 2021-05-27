@@ -111,7 +111,9 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
     cargotoml = {
       package: {
         name: crateName,
-        version
+        version,
+        description: "Generated types based on the JSON-Schema for " + crateName,
+        license: "Apache-2.0"
       },
       dependencies: {
         serde: { version: "1.0", features: ["derive"] },
