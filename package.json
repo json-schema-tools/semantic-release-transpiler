@@ -39,7 +39,7 @@
   "dependencies": {
     "@iarna/toml": "^2.2.5",
     "@json-schema-tools/dereferencer": "^1.5.1",
-    "@json-schema-tools/transpiler": "^1.7.3",
+    "@json-schema-tools/transpiler": "^1.7.4",
     "lodash": "^4.17.20",
     "node-typescript-compiler": "^2.1.2"
   }
