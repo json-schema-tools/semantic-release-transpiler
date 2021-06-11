@@ -117,7 +117,8 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
       },
       dependencies: {
         serde: { version: "1.0", features: ["derive"] },
-        serde_json: "1.0", // eslint-disable-line
+        serde_json: "1.0", // eslint-disable-line,
+        derive_builder: "0.10"
       }
     }
   }
