@@ -7,16 +7,36 @@ const readFile = util.promisify(fs.readFile);
 
 
 describe("json-schema-tools semantic-release plugin", () => {
-  afterEach(() => fs.rmdirSync("./testeroo", { recursive: true }));
+  afterEach(() => {
+    try {
+      fs.rmdirSync("./testeroo", { recursive: true });
+    } catch (e) {
+      // do nothing
+    }
+  });
 
   describe("verifyConditions", () => {
     it("can error on verifyConditions", () => {
-      return verifyConditions({ outpath: "./testeroo", schemaLocation: "./src/test.json", languages: { ts: true } }, {}).catch((e: SemanticReleaseError) => {
+      return verifyConditions(
+        {
+          outpath: "./testeroo",
+          schemaLocation: "./src/test.json",
+          languages: { ts: true }
+        },
+        {}
+      ).catch((e: SemanticReleaseError) => {
         expect(e.message).toContain("Cannot find schema");
       });
     });
     it("can pass verifyConditions", () => {
-      return verifyConditions({ outpath: "./testeroo", schemaLocation: "./src/test-schema.json", languages: { ts: true } }, {}).then((valid: boolean) => {
+      return verifyConditions(
+        {
+          outpath: "./testeroo",
+          schemaLocation: "./src/test-schema.json",
+          languages: { ts: true }
+        },
+        {}
+      ).then((valid: boolean) => {
         expect(valid).toEqual(true);
       });
     });
