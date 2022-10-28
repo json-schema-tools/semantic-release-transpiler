@@ -155,7 +155,7 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
   try {
     const dereffer = new Dereferencer(schema);
     dereffedSchema = await dereffer.resolve();
-  } catch (e) {
+  } catch (e: any) {
     throw new SemanticReleaseError(e.message);
   }
 
