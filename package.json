@@ -41,6 +41,6 @@
     "@json-schema-tools/dereferencer": "^1.5.7",
     "@json-schema-tools/transpiler": "^1.10.4",
     "lodash": "^4.17.21",
-    "node-typescript-compiler": "^3.0.0"
+    "node-typescript-compiler": "^4.0.0"
   }
 }
