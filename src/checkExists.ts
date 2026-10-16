@@ -7,7 +7,7 @@ const checkExists = async (p: string): Promise<boolean> => {
   try {
     await promisifiedFsAccess(p);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
