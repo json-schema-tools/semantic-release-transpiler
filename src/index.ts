@@ -4,6 +4,7 @@ import SemanticReleaseError from "./semanticReleaseError";
 import Transpiler from "@json-schema-tools/transpiler";
 import { camelCase, snakeCase, upperFirst } from "lodash";
 import * as fs from "fs";
+import * as os from "os";
 import { promisify } from "util";
 import { JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import Dereferencer from "@json-schema-tools/dereferencer";
@@ -12,6 +13,7 @@ import toml from "@iarna/toml";
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const mkdir = promisify(fs.mkdir);
+const mkdtemp = promisify(fs.mkdtemp);
 
 const tsc = require("node-typescript-compiler"); // eslint-disable-line
 
@@ -62,6 +64,10 @@ const generateTs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
     `export default ${regularName}`
   ].join("\n");
   await writeFile(indexTS, ts)
+  // The generated snippet is self-contained JSON: compile it hermetically so
+  // it never picks up ambient @types from the host project (slow, and fragile
+  // across @types/node versions).
+  const emptyTypeRoots = await mkdtemp(path.join(os.tmpdir(), "semantic-release-transpiler-"));
   await tsc.compile({
     "target": "es6",
     "module": "commonjs",
@@ -73,6 +79,9 @@ const generateTs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
     "strict": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "typeRoots": [
+      emptyTypeRoots,
+    ],
   }, [
     indexTS,
     `${outpath}/src/schema.json`
@@ -107,7 +116,7 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
   try {
     cargotoml = toml.parse(await readFile("${outpath}/Cargo.toml", "utf8"));
     cargotoml.version = version;
-  } catch (e) {
+  } catch {
     cargotoml = {
       package: {
         name: crateName,
@@ -117,8 +126,8 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
       },
       dependencies: {
         serde: { version: "1.0", features: ["derive"] },
-        serde_json: "1.0", // eslint-disable-line
-        derive_builder: "0.10" // eslint-disable-line
+        serde_json: "1.0",
+        derive_builder: "0.10"
       }
     }
   }
@@ -131,10 +140,10 @@ const generateRs = async (transpiler: Transpiler, schema: JSONSchemaObject, outp
 
 export const prepare: PluginFunction = async (pluginConfig, context): Promise<boolean> => {
   if (!verified) {
-    throw new SemanticReleaseError("Not verified", "ENOTVERIFIED", "Something went wrong and the schemas were not able to be verified."); //tslint:disable-line
+    throw new SemanticReleaseError("Not verified", "ENOTVERIFIED", "Something went wrong and the schemas were not able to be verified.");
   }
   if (!context || !context.nextRelease || !context.nextRelease.version) {
-    throw new SemanticReleaseError("No nextRelease version", "ENOVERSION", "Something went wrong and there is no next release version"); //tslint:disable-line
+    throw new SemanticReleaseError("No nextRelease version", "ENOVERSION", "Something went wrong and there is no next release version");
   }
 
   const outpath = pluginConfig.outpath || process.cwd();
@@ -155,8 +164,8 @@ export const prepare: PluginFunction = async (pluginConfig, context): Promise<bo
   try {
     const dereffer = new Dereferencer(JSON.parse(JSON.stringify(schema)));
     dereffedSchema = await dereffer.resolve();
-  } catch (e: any) {
-    throw new SemanticReleaseError(e.message);
+  } catch (e) {
+    throw new SemanticReleaseError((e as Error).message);
   }
 
   const transpiler = new Transpiler(dereffedSchema);

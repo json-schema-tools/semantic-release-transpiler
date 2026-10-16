@@ -10,7 +10,7 @@ describe("json-schema-tools semantic-release plugin", () => {
   afterEach(() => {
     try {
       fs.rmdirSync("./testeroo", { recursive: true });
-    } catch (e) {
+    } catch {
       // do nothing
     }
   });
